@@ -1,10 +1,10 @@
+require('dotenv').config()
 const debug = require('debug')('weathermap');
-
 const Koa = require('koa');
 const router = require('koa-router')();
 const fetch = require('node-fetch');
 const cors = require('kcors');
-
+console.log(process.env)
 const appId = process.env.APPID || '';
 const mapURI = process.env.MAP_ENDPOINT || "http://api.openweathermap.org/data/2.5";
 
@@ -15,7 +15,7 @@ const app = new Koa();
 
 app.use(cors());
 
-const fetchWeather = async (lon, lat) => {
+const fetchWeather = async (lat, lon) => {
   const endpoint = `${mapURI}/weather?lat=${lat}&lon=${lon}&appid=${appId}&`;
   const response = await fetch(endpoint);
 
@@ -23,9 +23,8 @@ const fetchWeather = async (lon, lat) => {
 };
 
 router.get('/api/weather', async ctx => {
-  const weatherData = await fetchWeather();
-
-  ctx.type = 'application/json; charset=utf-8';
+  const {lat, lon} = ctx.query;
+  const weatherData = await fetchWeather(lat, lon);
   ctx.body = weatherData.weather ? weatherData.weather[0] : {};
 });
 
