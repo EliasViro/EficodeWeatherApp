@@ -8,6 +8,12 @@ console.log(process.env)
 const appId = process.env.APPID || '';
 const mapURI = process.env.MAP_ENDPOINT || "http://api.openweathermap.org/data/2.5";
 
+class HTTPResponseError extends Error {
+	constructor(response, ...args) {
+		super(`HTTP Error Response: ${response.status} ${response.statusText}`, ...args);
+		this.response = response;
+	}
+}
 
 const port = process.env.PORT || 9000;
 
@@ -18,12 +24,19 @@ app.use(cors());
 const fetchWeather = async (lat, lon) => {
   const endpoint = `${mapURI}/weather?lat=${lat}&lon=${lon}&appid=${appId}&`;
   const response = await fetch(endpoint);
-
-  return response ? response.json() : {}
+  if (response.ok) {
+    return response.json();
+  } 
+  else {
+		throw new HTTPResponseError(response);
+	}
 };
 
 router.get('/api/weather', async ctx => {
   const {lat, lon} = ctx.query;
+  if (lat === undefined || lon === undefined) {
+    ctx.throw(400, 'latitude or longitude missing.');
+  }
   const weatherData = await fetchWeather(lat, lon);
   ctx.body = weatherData.weather ? weatherData.weather[0] : {};
 });
