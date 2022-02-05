@@ -3,7 +3,7 @@ const webpack = require("webpack");
 require('dotenv').config();
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const isProduction = process.env.NODE_ENV == "production";
 
 const config = {
@@ -22,6 +22,10 @@ const config = {
     new webpack.DefinePlugin({
       'process.env.ENDPOINT': JSON.stringify(process.env.ENDPOINT)
     }),
+    new CopyWebpackPlugin({patterns: [{
+      from : 'src/public/img',
+      to : 'img'
+    }]})
 
     // Add your plugins here
     // Learn more about plugins from https://webpack.js.org/configuration/plugins/

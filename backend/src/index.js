@@ -1,6 +1,7 @@
 require('dotenv').config();
 const debug = require('debug')('weathermap');
 const Koa = require('koa');
+const logger = require('koa-logger');
 const router = require('koa-router')();
 const fetch = require('node-fetch');
 const cors = require('kcors');
@@ -18,6 +19,7 @@ class HTTPResponseError extends Error {
 const port = process.env.PORT || 9000;
 
 const app = new Koa();
+app.use(logger());
 
 app.use(cors());
 
