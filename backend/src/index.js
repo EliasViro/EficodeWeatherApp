@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const debug = require('debug')('weathermap');
 const Koa = require('koa');
 const router = require('koa-router')();

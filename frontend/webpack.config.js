@@ -1,64 +1,53 @@
-const webpack = require('webpack');
-const path = require('path');
+// Generated using webpack-cli https://github.com/webpack/webpack-cli
+const webpack = require("webpack");
+require('dotenv').config();
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-const TransferWebpackPlugin = require('transfer-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const isProduction = process.env.NODE_ENV == "production";
 
-const GLOBALS = {
-  'process.env.ENDPOINT': JSON.stringify(process.env.ENDPOINT || 'http://0.0.0.0:9000/api'),
-};
-
-module.exports = {
-  mode: 'development',
-  cache: true,
-  devtool: 'cheap-module-eval-source-map',
-  entry: {
-    main: ['@babel/polyfill', path.join(__dirname, 'src/index.jsx')],
-  },
-  resolve: {
-    extensions: ['.js', '.jsx'],
-    modules: [
-      'src',
-      'node_modules',
-    ],
+const config = {
+  entry: "./src/index.jsx",
+  output: {
+    path: path.resolve(__dirname, "dist"),
   },
   devServer: {
-    contentBase: 'src/public',
-    historyApiFallback: true,
-    disableHostCheck: true,
-    host: process.env.HOST || '0.0.0.0',
-    port: process.env.PORT || 8000,
-  },
-  output: {
-    filename: '[name].[hash:8].js',
-    publicPath: '/',
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        include: path.resolve(__dirname, 'src'),
-        loader: 'babel-loader',
-        query: {
-          presets: [
-            '@babel/preset-react',
-            ['@babel/env', { targets: { browsers: ['last 2 versions'] }, modules: false }],
-          ],
-          plugins: [
-            '@babel/plugin-proposal-class-properties',
-          ],
-        },
-      },
-    ],
+    open: true,
+    host: "localhost",
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/public/index.html',
-      filename: 'index.html',
+      template: "index.html",
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new TransferWebpackPlugin([{ from: 'src/public' }], '.'),
-    new webpack.DefinePlugin(GLOBALS),
+    new webpack.DefinePlugin({
+      'process.env.ENDPOINT': JSON.stringify(process.env.ENDPOINT)
+    }),
+
+    // Add your plugins here
+    // Learn more about plugins from https://webpack.js.org/configuration/plugins/
   ],
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/i,
+        loader: "babel-loader",
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
+        type: "asset",
+      },
+
+      // Add your rules for custom modules here
+      // Learn more about loaders from https://webpack.js.org/loaders/
+    ],
+  },
+};
+
+module.exports = () => {
+  if (isProduction) {
+    config.mode = "production";
+  } else {
+    config.mode = "development";
+  }
+  return config;
 };
