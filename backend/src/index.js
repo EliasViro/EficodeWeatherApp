@@ -43,6 +43,10 @@ router.get('/api/weather', async ctx => {
   ctx.body = weatherData.weather ? weatherData.weather[0] : {};
 });
 
+router.get('/', async ctx => {
+  ctx.body = "Nothing to see here. The frontend is at localhost:8080.";
+});
+
 app.use(router.routes());
 app.use(router.allowedMethods());
 
