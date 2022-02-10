@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import "./public/style.css";
 
 const baseURL = process.env.ENDPOINT;
 

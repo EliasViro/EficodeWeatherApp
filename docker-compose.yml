@@ -3,6 +3,8 @@ services:
     build: backend
     ports:
       - "9000:9000"
+    environment:
+      - APPID=${APPID}
     volumes:
       - ./backend/src:/usr/src/app/src
   frontend:
